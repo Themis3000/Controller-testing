@@ -2,30 +2,25 @@ var haveEvents = 'ongamepadconnected' in window;
 var controllers = {};
 
 function connecthandler(e) {
-  addgamepad(e.gamepad);
+  add_game_pad(e.gamepad);
 }
 
-function addgamepad(gamepad) {
+function add_game_pad(gamepad) {
   controllers[gamepad.index] = gamepad;
+  var controller_select = document.getElementById("controller_select");
+  var option = document.createElement("option")
+  option.innerHTML = gamepad.id
+  option.value = gamepad.index
+  option.id = "controller" + gamepad.index
+  controller_select.appendChild(option)
+}
 
+function display_game_pad(gamepad) {
   var gamepad_display = document.getElementById("gamepad_display");
   gamepad_display.setAttribute("id", "controller" + gamepad.index);
 
   var gamepad_name = document.getElementById("gamepad_name");
   gamepad_name.innerHTML = "gamepad: " + gamepad.id
-
-  //buttons code
-  //var b = document.createElement("div");
-  //b.className = "buttons";
-  //for (var i = 0; i < gamepad.buttons.length; i++) {
-  //  var e = document.createElement("span");
-  //  e.className = "button";
-  //  //e.id = "b" + i;
-  //  e.innerHTML = i;
-  //  b.appendChild(e);
-  //}
-
-  //gamepad_display.appendChild(b);
 
   axis_display = document.getElementById("axis_display");
 
@@ -41,26 +36,19 @@ function addgamepad(gamepad) {
     //progress.innerHTML = i;
     channel_div.appendChild(label);
     channel_div.appendChild(progress);
-    axis_display.appendChild(channel_div)
+    axis_display.appendChild(channel_div);
   }
-
-//  // See https://github.com/luser/gamepadtest/blob/master/index.html
-//  var start = document.getElementById("start");
-//  if (start) {
-//    start.style.display = "none";
-//  }
-//
-//  document.body.appendChild(gamepad_display);
   requestAnimationFrame(updateStatus);
 }
 
 function disconnecthandler(e) {
-  removegamepad(e.gamepad);
+  remove_game_pad(e.gamepad);
 }
 
-function removegamepad(gamepad) {
-  var gamepad_display = document.getElementById("controller" + gamepad.index);
-  document.body.removeChild(gamepad_display);
+function remove_game_pad(gamepad) {
+  var controller_select = document.getElementById("controller_select");
+  var option = document.getElementById("controller" + gamepad.index);
+  controller_select.removeChild(option);
   delete controllers[gamepad.index];
 }
 
@@ -102,15 +90,24 @@ function scangamepads() {
       if (gamepads[i].index in controllers) {
         controllers[gamepads[i].index] = gamepads[i];
       } else {
-        addgamepad(gamepads[i]);
+        add_game_pad(gamepads[i]);
       }
     }
   }
 }
 
 
+function selection_update_handler() {
+  var selection = document.getElementById("controller_select").value
+  if (selection != "defualt_option") {
+    console.log(selection)
+  }
+}
+
+
 window.addEventListener("gamepadconnected", connecthandler);
 window.addEventListener("gamepaddisconnected", disconnecthandler);
+document.getElementById("controller_select").addEventListener("change", selection_update_handler());
 
 if (!haveEvents) {
   setInterval(scangamepads, 500);
