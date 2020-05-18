@@ -10,8 +10,8 @@ function add_game_pad(gamepad) {
   var controller_select = document.getElementById("controller_select");
   var option = document.createElement("option")
   option.innerHTML = gamepad.id
-  option.value = "controller" + gamepad.index
-  option.id = gamepad.index
+  option.value = gamepad.index
+  option.id = "controller" + gamepad.index
   controller_select.appendChild(option)
 }
 
@@ -46,8 +46,6 @@ function disconnecthandler(e) {
 }
 
 function remove_game_pad(gamepad) {
-  //var gamepad_display = document.getElementById("controller" + gamepad.index);
-  //document.body.removeChild(gamepad_display);
   var controller_select = document.getElementById("controller_select");
   var option = document.getElementById("controller" + gamepad.index);
   controller_select.removeChild(option);
@@ -99,8 +97,17 @@ function scangamepads() {
 }
 
 
+function selection_update_handler() {
+  var selection = document.getElementById("controller_select").value
+  if (selection != "defualt_option") {
+    console.log(selection)
+  }
+}
+
+
 window.addEventListener("gamepadconnected", connecthandler);
 window.addEventListener("gamepaddisconnected", disconnecthandler);
+document.getElementById("controller_select").addEventListener("change", selection_update_handler());
 
 if (!haveEvents) {
   setInterval(scangamepads, 500);
