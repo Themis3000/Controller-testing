@@ -41,6 +41,7 @@ function addgamepad(gamepad) {
     //progress.innerHTML = i;
     channel_div.appendChild(label);
     channel_div.appendChild(progress);
+    axis_display.appendChild(channel_div)
   }
 
 //  // See https://github.com/luser/gamepadtest/blob/master/index.html
