@@ -4,6 +4,7 @@ var selected_controller_index = "";
 var run_animation_loop = false;
 
 //controller.id is not supported on safari, make compatablity replacement
+//make it auto switch to an input on connection
 
 function connecthandler(e) {
   add_game_pad(e.gamepad);
