@@ -1,7 +1,9 @@
 var haveEvents = 'ongamepadconnected' in window;
 var controllers = {};
 var selected_controller_index = "";
-var animation_loop = false;
+var run_animation_loop = false;
+
+//controller.id is not supported on safari, make compatablity replacement
 
 function connecthandler(e) {
   add_game_pad(e.gamepad);
@@ -35,6 +37,7 @@ function display_game_pad() {
     channel_div.appendChild(progress);
     axis_display.appendChild(channel_div);
   }
+  run_animation_loop = true;
   requestAnimationFrame(updateStatus);
 }
 
@@ -55,15 +58,21 @@ function updateStatus() {
   }
 
   var controller = controllers[selected_controller_index];
-  var gamepad_display = document.getElementById("axis_display");
-  var axes = gamepad_display.getElementsByClassName("axis");
-
-  for (i = 0; i < controller.axes.length; i++) {
-    var axis_display = axes[i];
-    axis_display.innerHTML = i + ": " + controller.axes[i].toFixed(4);
-    axis_display.setAttribute("value", controller.axes[i] + 1);
+  if (typeof controller == 'undefined') {
+    stop_display()
   }
-  requestAnimationFrame(updateStatus);
+
+  if (run_animation_loop){
+    var gamepad_display = document.getElementById("axis_display");
+    var axes = gamepad_display.getElementsByClassName("axis");
+
+    for (i = 0; i < controller.axes.length; i++) {
+      var axis_display = axes[i];
+      axis_display.innerHTML = i + ": " + controller.axes[i].toFixed(4);
+      axis_display.setAttribute("value", controller.axes[i] + 1);
+    }
+    requestAnimationFrame(updateStatus);
+  }
 }
 
 function scangamepads() {
@@ -80,22 +89,19 @@ function scangamepads() {
 }
 
 function stop_display() {
-
+  run_animation_loop = false;
+  document.getElementById("axis_display").innerHTML = ""
 }
 
-
-function selection_update_handler(e) {
+function selection_update_handler() {
   var selection = document.getElementById("controller_select").value;
+  selected_controller_index = selection;
   if (selection !== "") {
-    selected_controller_index = selection;
     display_game_pad()
   } else {
-    //stop displaying
-    selected_controller_index = selection;
-    console.log("stop displaying")
+    stop_display()
   }
 }
-
 
 window.addEventListener("gamepadconnected", connecthandler);
 window.addEventListener("gamepaddisconnected", disconnecthandler);
