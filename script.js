@@ -18,6 +18,10 @@ function add_game_pad(gamepad) {
   option.value = gamepad.index
   option.id = "controller" + gamepad.index
   controller_select.appendChild(option)
+  if (controller_select.value == "") {
+    controller_select.value = gamepad.index;
+    selection_update_handler()
+  }
 }
 
 function display_game_pad() {
