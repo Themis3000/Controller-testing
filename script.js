@@ -2,9 +2,9 @@ var haveEvents = 'ongamepadconnected' in window;
 var controllers = {};
 var selected_controller_index = "";
 var run_animation_loop = false;
+var axes_display = document.getElementById("axes_display");
 
 //controller.id is not supported on safari, make compatablity replacement
-//make it auto switch to an input on connection
 
 function connecthandler(e) {
   add_game_pad(e.gamepad);
@@ -18,6 +18,7 @@ function add_game_pad(gamepad) {
   option.value = gamepad.index
   option.id = "controller" + gamepad.index
   controller_select.appendChild(option)
+  //auto switches to newly connected game pad if none is currently selected
   if (controller_select.value == "") {
     controller_select.value = gamepad.index;
     selection_update_handler()
@@ -25,22 +26,23 @@ function add_game_pad(gamepad) {
 }
 
 function display_game_pad() {
-  var gamepad_display = document.getElementById("gamepad_display");
-  axis_display = document.getElementById("axis_display");
   var controller = controllers[selected_controller_index]
-
+  //loop through all axis inputs and create a bar
   for (var i = 0; i < controller.axes.length; i++) {
-    var channel_div = document.createElement("div");
-    channel_div.id = "channel_div" + String(i+1)
-    var label = document.createElement("h3");
-    label.innerHTML = "channel " + String(i+1)
-    var progress = document.createElement("progress");
-    progress.className = "axis";
-    progress.setAttribute("max", "2");
-    progress.setAttribute("value", "1");
-    channel_div.appendChild(label);
-    channel_div.appendChild(progress);
-    axis_display.appendChild(channel_div);
+    var axis_display = document.createElement("div");
+    axis_display.className = "axis_display";
+    var label = document.createElement("h4");
+    label.innerHTML = String(i+1);
+    axis_display.appendChild(label);
+    var bar_container = document.createElement("div");
+    bar_container.className = "bar_container";
+    axis_display.appendChild(bar_container);
+    var bar = document.createElement("div");
+    bar.className = "bar";
+    bar.innerHTML = "0%";
+    bar.id = "channel_div" + String(i+1);
+    bar_container.appendChild(bar);
+    axes_display.appendChild(axis_display);
   }
   run_animation_loop = true;
   requestAnimationFrame(updateStatus);
@@ -68,13 +70,13 @@ function updateStatus() {
   }
 
   if (run_animation_loop){
-    var gamepad_display = document.getElementById("axis_display");
-    var axes = gamepad_display.getElementsByClassName("axis");
-
+    var bars = axes_display.getElementsByClassName("bar");
+    //loops through all classes named "bar" within axes_display and updates values
     for (i = 0; i < controller.axes.length; i++) {
-      var axis_display = axes[i];
-      axis_display.innerHTML = i + ": " + controller.axes[i].toFixed(4);
-      axis_display.setAttribute("value", controller.axes[i] + 1);
+      var axis_display = bars[i];
+      var percent = controller.axes[i] * 100 / 2 + 50;
+      axis_display.innerHTML =  Math.round(percent) + "%";
+      axis_display.style.width = percent + "%";
     }
     requestAnimationFrame(updateStatus);
   }
@@ -95,7 +97,7 @@ function scangamepads() {
 
 function stop_display() {
   run_animation_loop = false;
-  document.getElementById("axis_display").innerHTML = ""
+  document.getElementById("axes_display").innerHTML = ""
 }
 
 function selection_update_handler() {
