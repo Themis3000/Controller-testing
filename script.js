@@ -4,8 +4,6 @@ var selected_controller_index = "";
 var run_animation_loop = false;
 var axes_display = document.getElementById("axes_display");
 
-//controller.id is not supported on safari, make compatablity replacement
-
 function connecthandler(e) {
   add_game_pad(e.gamepad);
 }
@@ -13,15 +11,19 @@ function connecthandler(e) {
 function add_game_pad(gamepad) {
   controllers[gamepad.index] = gamepad;
   var controller_select = document.getElementById("controller_select");
-  var option = document.createElement("option")
-  option.innerHTML = gamepad.id
-  option.value = gamepad.index
-  option.id = "controller" + gamepad.index
-  controller_select.appendChild(option)
+  var option = document.createElement("option");
+  if ("id" in gamepad) {
+    option.innerHTML = gamepad.id;
+  } else {
+    option.innerHTML = "controller_" + gamepad.index;
+  }
+  option.value = gamepad.index;
+  option.id = "controller" + gamepad.index;
+  controller_select.appendChild(option);
   //auto switches to newly connected game pad if none is currently selected
   if (controller_select.value == "") {
     controller_select.value = gamepad.index;
-    selection_update_handler()
+    selection_update_handler();
   }
 }
 
@@ -66,7 +68,7 @@ function updateStatus() {
 
   var controller = controllers[selected_controller_index];
   if (typeof controller == 'undefined') {
-    stop_display()
+    stop_display();
   }
 
   if (run_animation_loop){
@@ -97,16 +99,16 @@ function scangamepads() {
 
 function stop_display() {
   run_animation_loop = false;
-  document.getElementById("axes_display").innerHTML = ""
+  document.getElementById("axes_display").innerHTML = "";
 }
 
 function selection_update_handler() {
   var selection = document.getElementById("controller_select").value;
   selected_controller_index = selection;
   if (selection !== "") {
-    display_game_pad()
+    display_game_pad();
   } else {
-    stop_display()
+    stop_display();
   }
 }
 
