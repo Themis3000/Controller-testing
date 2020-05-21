@@ -26,7 +26,7 @@ function add_game_pad(gamepad) {
 
 function display_game_pad() {
   var gamepad_display = document.getElementById("gamepad_display");
-  axis_display = document.getElementById("axis_display");
+  axes_display = document.getElementById("axes_display");
   var controller = controllers[selected_controller_index]
 
   for (var i = 0; i < controller.axes.length; i++) {
@@ -40,7 +40,7 @@ function display_game_pad() {
     progress.setAttribute("value", "1");
     channel_div.appendChild(label);
     channel_div.appendChild(progress);
-    axis_display.appendChild(channel_div);
+    axes_display.appendChild(channel_div);
   }
   run_animation_loop = true;
   requestAnimationFrame(updateStatus);
@@ -68,13 +68,13 @@ function updateStatus() {
   }
 
   if (run_animation_loop){
-    var gamepad_display = document.getElementById("axis_display");
+    var gamepad_display = document.getElementById("axes_display");
     var axes = gamepad_display.getElementsByClassName("axis");
 
     for (i = 0; i < controller.axes.length; i++) {
-      var axis_display = axes[i];
-      axis_display.innerHTML = i + ": " + controller.axes[i].toFixed(4);
-      axis_display.setAttribute("value", controller.axes[i] + 1);
+      var axes_display = axes[i];
+      axes_display.innerHTML = i + ": " + controller.axes[i].toFixed(4);
+      axes_display.setAttribute("value", controller.axes[i] + 1);
     }
     requestAnimationFrame(updateStatus);
   }
@@ -95,7 +95,7 @@ function scangamepads() {
 
 function stop_display() {
   run_animation_loop = false;
-  document.getElementById("axis_display").innerHTML = ""
+  document.getElementById("axes_display").innerHTML = ""
 }
 
 function selection_update_handler() {

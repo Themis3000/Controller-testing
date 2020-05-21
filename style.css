@@ -1,0 +1,25 @@
+body {
+  font-family: Verdana,sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.axis_display {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.bar-container {
+  color: #000 !important;
+  background-color: #f1f1f1 !important;
+  box-sizing: inherit;
+  width: 90%
+}
+
+.bar {
+  color: #fff !important;
+  background-color: #4CAF50;
+  padding: 0.01em 16px;
+  box-sizing: inherit;
+}
